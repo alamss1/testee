@@ -2,45 +2,62 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Form PMT Puskesmas Pagak</title>
+  <title>Form Dokumentasi PMT Puskesmas Pagak</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #eef2f7;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f4f8;
       padding: 20px;
       max-width: 600px;
       margin: auto;
     }
     h2 {
       text-align: center;
+      color: #2a2a2a;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
     }
     input, select {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
+      margin-top: 5px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 1em;
     }
     button {
-      padding: 10px;
+      margin-top: 20px;
       width: 100%;
+      padding: 12px;
       background-color: #28a745;
       border: none;
-      border-radius: 6px;
       color: white;
-      font-weight: bold;
+      font-size: 1em;
+      border-radius: 6px;
       cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
-  <h2>Dokumentasi PMT Pangan Lokal</h2>
+  <h2>Form Dokumentasi PMT</h2>
   <form id="pmtForm">
-    <label>Tanggal</label>
+    <label for="tanggal">Tanggal</label>
     <input type="date" name="tanggal" required>
 
-    <label>Desa</label>
+    <label for="desa">Desa</label>
     <select name="desa" required>
       <option value="">-- Pilih Desa --</option>
       <option value="Gampingan">Gampingan</option>
@@ -49,37 +66,42 @@
       <option value="Pagak">Pagak</option>
     </select>
 
-    <label>Nama Balita</label>
+    <label for="namaBalita">Nama Balita</label>
     <input type="text" name="namaBalita" required>
 
-    <label>Nama Ibu Hamil</label>
+    <label for="namaIbu">Nama Ibu Hamil</label>
     <input type="text" name="namaIbu" required>
 
-    <label>Foto Balita</label>
+    <label for="fotoBalita">Foto Balita</label>
     <input type="file" name="fotoBalita" accept="image/*" required>
 
-    <label>Foto Ibu Hamil</label>
+    <label for="fotoIbu">Foto Ibu Hamil</label>
     <input type="file" name="fotoIbu" accept="image/*" required>
 
-    <button type="submit">Kirim</button>
+    <button type="submit">Kirim Dokumentasi</button>
   </form>
 
   <script>
-    document.getElementById("pmtForm").addEventListener("submit", async function(e) {
+    const form = document.getElementById("pmtForm");
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      const form = e.target;
       const formData = new FormData(form);
 
-      const response = await fetch("https://script.google.com/macros/s/AKfycbx2Q4kLgD4et_FvmwUwgbZ6rstwlpX3Y0MTrGJTSSGqqEfVIS-nQu_f54HV2OpwRxvW/exec", {
-        method: "POST",
-        body: formData
-      });
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbw22pZMZcKMVy5UXg_EDK5zdwdLLtFpIyZc4F3XoYh8yDJdDDbifDBvJ-MkQsWDALUUKg/exec", {
+          method: "POST",
+          body: formData
+        });
 
-      if (response.ok) {
-        alert("Data berhasil dikirim!");
-        form.reset();
-      } else {
-        alert("Gagal mengirim data!");
+        if (response.ok) {
+          alert("✅ Data berhasil dikirim!");
+          form.reset();
+        } else {
+          alert("❌ Gagal mengirim data.");
+        }
+      } catch (error) {
+        alert("⚠️ Terjadi kesalahan: " + error.message);
       }
     });
   </script>
