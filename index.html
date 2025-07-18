@@ -15,29 +15,29 @@
 <body>
   <h2>📷 Dokumentasi PMT Posyandu 2025</h2>
   <form id="uploadForm">
-    <label for="tanggal">📅 Tanggal Kegiatan</label>
+    <label>📅 Tanggal Kegiatan</label>
     <input type="date" name="tanggal" required />
 
-    <label for="desa">🏡 Nama Desa</label>
+    <label>🏡 Nama Desa</label>
     <select name="desa" required>
       <option value="">-- Pilih Desa --</option>
-      <option value="Gampingan">Gampingan</option>
-      <option value="Tlogorejo">Tlogorejo</option>
-      <option value="Sumberejo">Sumberejo</option>
-      <option value="Pagak">Pagak</option>
+      <option>Gampingan</option>
+      <option>Tlogorejo</option>
+      <option>Sumberejo</option>
+      <option>Pagak</option>
     </select>
 
-    <label for="nama_balita">👶 Nama Balita</label>
-    <input type="text" name="nama_balita" required />
+    <label>👶 Nama Balita (opsional)</label>
+    <input type="text" name="nama_balita" />
 
-    <label for="nama_ibu">🤰 Nama Ibu Hamil</label>
-    <input type="text" name="nama_ibu" required />
+    <label>🤰 Nama Ibu Hamil (opsional)</label>
+    <input type="text" name="nama_ibu" />
 
-    <label for="foto_balita">📸 Upload Foto Balita</label>
-    <input type="file" name="foto_balita" accept="image/*" required />
+    <label>📸 Upload Foto Balita (opsional)</label>
+    <input type="file" name="foto_balita" accept="image/*" />
 
-    <label for="foto_ibu">📸 Upload Foto Ibu Hamil</label>
-    <input type="file" name="foto_ibu" accept="image/*" required />
+    <label>📸 Upload Foto Ibu Hamil (opsional)</label>
+    <input type="file" name="foto_ibu" accept="image/*" />
 
     <button type="submit">Kirim Data</button>
     <p id="status"></p>
@@ -53,10 +53,11 @@
 
       const formData = new FormData(form);
 
-      const toBase64 = file => new Promise((resolve, reject) => {
+      const toBase64 = (file) => new Promise((resolve, reject) => {
+        if (!file) return resolve(""); // Kosong jika tidak ada file
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = error => reject(error);
+        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
 
@@ -64,8 +65,8 @@
         const data = {
           tanggal: formData.get("tanggal"),
           desa: formData.get("desa"),
-          nama_balita: formData.get("nama_balita"),
-          nama_ibu: formData.get("nama_ibu"),
+          nama_balita: formData.get("nama_balita") || "",
+          nama_ibu: formData.get("nama_ibu") || "",
           foto_balita: await toBase64(formData.get("foto_balita")),
           foto_ibu: await toBase64(formData.get("foto_ibu")),
         };
@@ -84,7 +85,7 @@
         }
       } catch (err) {
         console.error(err);
-        status.textContent = "❌ Terjadi kesalahan.";
+        status.textContent = "❌ Terjadi kesalahan saat mengirim.";
       }
     });
   </script>
