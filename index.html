@@ -3,82 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Upload PMT Posyandu</title>
+  <title>Upload PMT Posyandu 2025</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
-    input, select, button { width: 100%; padding: 10px; margin: 8px 0; }
+    body { font-family: sans-serif; padding: 20px; max-width: 450px; margin: auto; }
+    h2 { color: #157347; }
+    input, select, button, textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; }
+    button { background: #198754; color: white; font-weight: bold; cursor: pointer; border: none; }
+    #status { margin-top: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>DOKUMENTASI PMT POSYANDU 2025</h2>
+  <h2>📷 Dokumentasi PMT Posyandu 2025</h2>
   <form id="uploadForm">
-    <label>Tanggal</label>
+    <label for="tanggal">📅 Tanggal Kegiatan</label>
     <input type="date" name="tanggal" required />
-    
-    <label>Nama Desa</label>
+
+    <label for="desa">🏡 Nama Desa</label>
     <select name="desa" required>
-      <option value="">Pilih Desa</option>
-      <option>Gampingan</option>
-      <option>Tlogorejo</option>
-      <option>Sumberejo</option>
-      <option>Pagak</option>
+      <option value="">-- Pilih Desa --</option>
+      <option value="Gampingan">Gampingan</option>
+      <option value="Tlogorejo">Tlogorejo</option>
+      <option value="Sumberejo">Sumberejo</option>
+      <option value="Pagak">Pagak</option>
     </select>
-    
-    <label>Nama Balita</label>
+
+    <label for="nama_balita">👶 Nama Balita</label>
     <input type="text" name="nama_balita" required />
-    
-    <label>Nama Ibu Hamil</label>
+
+    <label for="nama_ibu">🤰 Nama Ibu Hamil</label>
     <input type="text" name="nama_ibu" required />
-    
-    <label>Foto Balita</label>
+
+    <label for="foto_balita">📸 Upload Foto Balita</label>
     <input type="file" name="foto_balita" accept="image/*" required />
-    
-    <label>Foto Ibu Hamil</label>
+
+    <label for="foto_ibu">📸 Upload Foto Ibu Hamil</label>
     <input type="file" name="foto_ibu" accept="image/*" required />
-    
-    <button type="submit">Kirim</button>
+
+    <button type="submit">Kirim Data</button>
     <p id="status"></p>
   </form>
 
   <script>
     const form = document.getElementById("uploadForm");
+    const status = document.getElementById("status");
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const status = document.getElementById("status");
-      status.textContent = "Mengirim...";
+      status.textContent = "Mengirim data... ⏳";
 
       const formData = new FormData(form);
-      
+
       const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
+        reader.onerror = error => reject(error);
         reader.readAsDataURL(file);
       });
 
-      const data = {
-        tanggal: formData.get("tanggal"),
-        desa: formData.get("desa"),
-        nama_balita: formData.get("nama_balita"),
-        nama_ibu: formData.get("nama_ibu"),
-        foto_balita: await toBase64(formData.get("foto_balita")),
-        foto_ibu: await toBase64(formData.get("foto_ibu"))
-      };
+      try {
+        const data = {
+          tanggal: formData.get("tanggal"),
+          desa: formData.get("desa"),
+          nama_balita: formData.get("nama_balita"),
+          nama_ibu: formData.get("nama_ibu"),
+          foto_balita: await toBase64(formData.get("foto_balita")),
+          foto_ibu: await toBase64(formData.get("foto_ibu")),
+        };
 
-      const scriptURL = "https://script.google.com/macros/s/PASTE_SCRIPT_URL/exec";
-      const res = await fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json"
+        const res = await fetch("https://script.google.com/macros/s/AKfycbw8prw4yTLum2GE-RVZhPLqEBz_QAka7Y_B5jgTkEikuAoHVeP7oO0ORFTFjkwntPzYYg/exec", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (res.ok) {
+          status.textContent = "✅ Data berhasil dikirim!";
+          form.reset();
+        } else {
+          status.textContent = "❌ Gagal mengirim data.";
         }
-      });
-
-      if (res.ok) {
-        status.textContent = "Data berhasil dikirim ✅";
-        form.reset();
-      } else {
-        status.textContent = "Gagal mengirim ❌";
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Terjadi kesalahan.";
       }
     });
   </script>
