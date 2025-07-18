@@ -2,53 +2,102 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Upload Dokumentasi PMT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dokumentasi PMT Puskesmas Pagak</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #f0f0f0; }
-    input, select { display: block; margin-bottom: 10px; width: 100%; padding: 8px; }
-    button { padding: 10px 15px; background: green; color: white; border: none; cursor: pointer; }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      margin-top: 12px;
+      display: block;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #219150;
+    }
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h2>DOKUMENTASI PMT PANGAN LOKAL</h2>
-  <form id="formUpload">
-    <label>Tanggal:</label>
-    <input type="date" name="tanggal" required />
+  <div class="container">
+    <h2>Dokumentasi PMT</h2>
+    <form id="formUpload">
+      <label for="tanggal">Tanggal:</label>
+      <input type="date" name="tanggal" id="tanggal" required>
 
-    <label>Desa:</label>
-    <select name="desa" required>
-      <option value="">Pilih Desa</option>
-      <option>Gampingan</option>
-      <option>Tlogorejo</option>
-      <option>Sumberejo</option>
-      <option>Pagak</option>
-    </select>
+      <label for="desa">Desa:</label>
+      <select name="desa" id="desa" required>
+        <option value="">Pilih Desa</option>
+        <option>Gampingan</option>
+        <option>Tlogorejo</option>
+        <option>Sumberejo</option>
+        <option>Pagak</option>
+      </select>
 
-    <label>Nama Balita (Opsional):</label>
-    <input type="text" name="namaBalita" />
+      <label for="namaBalita">Nama Balita (Opsional):</label>
+      <input type="text" name="namaBalita" id="namaBalita">
 
-    <label>Nama Ibu Hamil (Opsional):</label>
-    <input type="text" name="namaIbu" />
+      <label for="namaIbu">Nama Ibu Hamil (Opsional):</label>
+      <input type="text" name="namaIbu" id="namaIbu">
 
-    <label>Upload Foto Balita (Opsional):</label>
-    <input type="file" id="fotoBalita" accept="image/*" />
+      <label for="fotoBalita">Foto Balita (Opsional):</label>
+      <input type="file" id="fotoBalita" accept="image/*">
 
-    <label>Upload Foto Ibu Hamil (Opsional):</label>
-    <input type="file" id="fotoIbu" accept="image/*" />
+      <label for="fotoIbu">Foto Ibu Hamil (Opsional):</label>
+      <input type="file" id="fotoIbu" accept="image/*">
 
-    <button type="submit">Kirim</button>
-  </form>
-
-  <p id="status"></p>
+      <button type="submit">Kirim Data</button>
+      <p id="status"></p>
+    </form>
+  </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzrkrflc6uxxXAkDgefE0ovH0KvW5wKfeKoeiPDiMNR6kAg31RNEmNYdXLlrhWtHPbQtg/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxZ_GLAyMIHcY8xW5O4bH7GvQPW5bQjQi9P1iemj1RavwJPa54D-uiK0TZ96D3azj8L/exec";
 
     document.getElementById("formUpload").addEventListener("submit", async function(e) {
       e.preventDefault();
       const form = e.target;
       const status = document.getElementById("status");
-      status.textContent = "Mengirim...";
+      status.textContent = "⏳ Mengirim...";
 
       const fotoBalita = document.getElementById("fotoBalita").files[0];
       const fotoIbu = document.getElementById("fotoIbu").files[0];
@@ -74,9 +123,18 @@
       const formData = new URLSearchParams(data);
 
       fetch(scriptURL, { method: 'POST', body: formData })
-        .then(response => response.text())
-        .then(text => status.textContent = text === "Sukses" ? "✅ Data berhasil dikirim!" : "❌ Gagal: " + text)
-        .catch(err => status.textContent = "❌ Gagal kirim: " + err.message);
+        .then(res => res.text())
+        .then(res => {
+          if (res === "Sukses") {
+            status.textContent = "✅ Data berhasil dikirim!";
+            form.reset();
+          } else {
+            status.textContent = "❌ Gagal: " + res;
+          }
+        })
+        .catch(err => {
+          status.textContent = "❌ Error: " + err.message;
+        });
     });
   </script>
 </body>
