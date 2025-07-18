@@ -1,103 +1,48 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dokumentasi PMT Puskesmas Pagak</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Dokumentasi PMT</title>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 480px;
-      margin: auto;
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #2c3e50;
-    }
-    label {
-      margin-top: 12px;
-      display: block;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 4px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    button {
-      background: #27ae60;
-      color: white;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #219150;
-    }
-    #status {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: bold;
-    }
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f9f9f9; }
+    label, input, select, button { display: block; width: 100%; margin-top: 10px; }
+    button { background: #4CAF50; color: white; padding: 10px; border: none; cursor: pointer; }
+    #status { margin-top: 15px; font-weight: bold; text-align: center; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Dokumentasi PMT</h2>
-    <form id="formUpload">
-      <label for="tanggal">Tanggal:</label>
-      <input type="date" name="tanggal" id="tanggal" required>
-
-      <label for="desa">Desa:</label>
-      <select name="desa" id="desa" required>
-        <option value="">Pilih Desa</option>
-        <option>Gampingan</option>
-        <option>Tlogorejo</option>
-        <option>Sumberejo</option>
-        <option>Pagak</option>
-      </select>
-
-      <label for="namaBalita">Nama Balita :</label>
-      <input type="text" name="namaBalita" id="namaBalita">
-
-      <label for="namaIbu">Nama Ibu Hamil :</label>
-      <input type="text" name="namaIbu" id="namaIbu">
-
-      <label for="fotoBalita">Foto Balita :</label>
-      <input type="file" id="fotoBalita" accept="image/*">
-
-      <label for="fotoIbu">Foto Ibu Hamil :</label>
-      <input type="file" id="fotoIbu" accept="image/*">
-
-      <button type="submit">Kirim Data</button>
-      <p id="status"></p>
-    </form>
-  </div>
+  <h2>Dokumentasi PMT Puskesmas Pagak</h2>
+  <form id="pmtForm">
+    <label>Tanggal:</label>
+    <input type="date" name="tanggal" required />
+    <label>Desa:</label>
+    <select name="desa" required>
+      <option value="">-- Pilih Desa --</option>
+      <option value="Gampingan">Gampingan</option>
+      <option value="Tlogorejo">Tlogorejo</option>
+      <option value="Sumberejo">Sumberejo</option>
+      <option value="Pagak">Pagak</option>
+    </select>
+    <label>Nama Balita:</label>
+    <input type="text" name="namaBalita" required />
+    <label>Nama Ibu Hamil:</label>
+    <input type="text" name="namaIbu" required />
+    <label>Upload Foto Balita:</label>
+    <input type="file" id="fotoBalita" required />
+    <label>Upload Foto Ibu Hamil:</label>
+    <input type="file" id="fotoIbu" required />
+    <button type="submit">Kirim</button>
+  </form>
+  <div id="status"></div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxZ_GLAyMIHcY8xW5O4bH7GvQPW5bQjQi9P1iemj1RavwJPa54D-uiK0TZ96D3azj8L/exec";
+    const form = document.getElementById("pmtForm");
+    const status = document.getElementById("status");
 
-    document.getElementById("formUpload").addEventListener("submit", async function(e) {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      const form = e.target;
-      const status = document.getElementById("status");
-      status.textContent = "⏳ Mengirim...";
+      status.innerText = "Mengirim...";
 
       const fotoBalita = document.getElementById("fotoBalita").files[0];
       const fotoIbu = document.getElementById("fotoIbu").files[0];
@@ -105,36 +50,32 @@
       const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
+        reader.onerror = error => reject(error);
         reader.readAsDataURL(file);
       });
 
       const data = {
         tanggal: form.tanggal.value,
         desa: form.desa.value,
-        namaBalita: form.namaBalita.value || "",
-        namaIbu: form.namaIbu.value || "",
-        fotoBalita: fotoBalita ? await toBase64(fotoBalita) : "",
-        fotoIbu: fotoIbu ? await toBase64(fotoIbu) : "",
-        namaFileBalita: fotoBalita ? fotoBalita.name : "",
-        namaFileIbu: fotoIbu ? fotoIbu.name : ""
+        namaBalita: form.namaBalita.value,
+        namaIbu: form.namaIbu.value,
+        fotoBalita: await toBase64(fotoBalita),
+        fotoIbu: await toBase64(fotoIbu),
+        namaFileBalita: fotoBalita.name,
+        namaFileIbu: fotoIbu.name
       };
 
-      const formData = new URLSearchParams(data);
-
-      fetch(scriptURL, { method: 'POST', body: formData })
-        .then(res => res.text())
-        .then(res => {
-          if (res === "Sukses") {
-            status.textContent = "✅ Data berhasil dikirim!";
-            form.reset();
-          } else {
-            status.textContent = "❌ Gagal: " + res;
-          }
-        })
-        .catch(err => {
-          status.textContent = "❌ Error: " + err.message;
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwg2soBetziCsaW8jKkLzgSYcHmPwAIwevaGtKxrl8Kl7xbxtsmZoxWjABt6MkheNQPcA/exec", {
+          method: "POST",
+          body: new URLSearchParams(data)
         });
+        const result = await response.text();
+        status.innerText = result.includes("Sukses") ? "✅ Data berhasil dikirim!" : "❌ " + result;
+        form.reset();
+      } catch (err) {
+        status.innerText = "❌ Error: " + err.message;
+      }
     });
   </script>
 </body>
