@@ -1,125 +1,106 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DOKUMENTASI PMT - Puskesmas Pagak 2025</title>
+  <meta charset="UTF-8">
+  <title>Dokumentasi PMT Puskesmas Pagak 2025</title>
   <style>
     body {
       font-family: sans-serif;
-      max-width: 600px;
-      margin: 30px auto;
+      max-width: 500px;
+      margin: auto;
       padding: 20px;
-      background: #f9f9f9;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h2 {
       text-align: center;
-      color: #2c3e50;
     }
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 10px;
     }
     input, select {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      padding: 6px;
+      margin-top: 4px;
     }
     button {
       margin-top: 20px;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      background: #2ecc71;
+      padding: 10px;
+      background: #007B00;
       color: white;
-      font-size: 16px;
-      border-radius: 8px;
+      border: none;
       cursor: pointer;
     }
-    .status {
-      margin-top: 20px;
-      text-align: center;
+    #status {
+      margin-top: 15px;
       font-weight: bold;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h2>DOKUMENTASI PMT<br/>PUSKESMAS PAGAK 2025</h2>
-  <form id="pmtForm">
-    <label for="tanggal">Tanggal:</label>
-    <input type="date" id="tanggal" name="tanggal" required>
+  <h2>📷 Dokumentasi PMT 2025</h2>
 
-    <label for="desa">Nama Desa:</label>
-    <select id="desa" name="desa" required>
-      <option value="">-- Pilih Desa --</option>
-      <option value="Gampingan">Gampingan</option>
-      <option value="Tlogorejo">Tlogorejo</option>
-      <option value="Sumberejo">Sumberejo</option>
-      <option value="Pagak">Pagak</option>
-    </select>
+  <form id="uploadForm">
+    <label>Tanggal:
+      <input type="date" name="tanggal" required>
+    </label>
 
-    <label for="nama_balita">Nama Balita (opsional):</label>
-    <input type="text" id="nama_balita" name="nama_balita">
+    <label>Nama Desa:
+      <select name="desa" required>
+        <option value="">-- Pilih Desa --</option>
+        <option value="Gampingan">Gampingan</option>
+        <option value="Tlogorejo">Tlogorejo</option>
+        <option value="Sumberejo">Sumberejo</option>
+        <option value="Pagak">Pagak</option>
+      </select>
+    </label>
 
-    <label for="nama_ibu">Nama Ibu Hamil (opsional):</label>
-    <input type="text" id="nama_ibu" name="nama_ibu">
+    <label>Nama Balita:
+      <input type="text" name="nama_balita">
+    </label>
 
-    <label for="foto_balita">Foto Balita (opsional):</label>
-    <input type="file" id="foto_balita" name="foto_balita" accept="image/*">
+    <label>Foto Balita:
+      <input type="file" name="foto_balita" accept="image/*">
+    </label>
 
-    <label for="foto_ibu">Foto Ibu Hamil (opsional):</label>
-    <input type="file" id="foto_ibu" name="foto_ibu" accept="image/*">
+    <label>Nama Ibu Hamil:
+      <input type="text" name="nama_ibu">
+    </label>
 
-    <button type="submit">Kirim Data</button>
-    <div class="status" id="statusPesan"></div>
+    <label>Foto Ibu Hamil:
+      <input type="file" name="foto_ibu" accept="image/*">
+    </label>
+
+    <button type="submit">Kirim</button>
+    <div id="status"></div>
   </form>
 
   <script>
-    document.getElementById("pmtForm").addEventListener("submit", async function(e) {
+    const form = document.getElementById("uploadForm");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      status.textContent = "⏳ Mengirim data...";
 
-      const statusPesan = document.getElementById("statusPesan");
-      statusPesan.textContent = "⏳ Mengirim data...";
-
-      const form = e.target;
-      const tanggal = form.tanggal.value;
-      const desa = form.desa.value;
-      const nama_balita = form.nama_balita.value;
-      const nama_ibu = form.nama_ibu.value;
-      const foto_balita = form.foto_balita.files[0];
-      const foto_ibu = form.foto_ibu.files[0];
-
-      // Upload foto ke Google Drive (gunakan Google Form jika ingin native)
-      // Di sini hanya info ada/tidak-nya gambar
-      const data = {
-        tanggal,
-        desa,
-        nama_balita,
-        nama_ibu,
-        foto_balita: foto_balita ? true : false,
-        foto_ibu: foto_ibu ? true : false
-      };
+      const formData = new FormData(form);
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxlKRAco93sDhsYmEHPwyGL7TlNtae0s9iTWYlH3G6K_YKgGS7p_KJ1zjjF62tsjwsmrw/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzfQLWEkTO1nMMH8bKPMcNfXXy8bFQUDsyntsM2go9pR02hRfZrxm3QLy-3K2N9HW7gwA/exec", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+          body: formData
         });
 
-        const text = await response.text();
-        if (text.trim() === "OK") {
-          statusPesan.textContent = "✅ Data berhasil dikirim.";
+        const result = await response.text();
+
+        if (result.includes("OK")) {
+          status.textContent = "✅ Data berhasil dikirim!";
           form.reset();
         } else {
-          statusPesan.textContent = "❌ Gagal mengirim: " + text;
+          status.textContent = "❌ Gagal mengirim: " + result;
         }
-      } catch (err) {
-        statusPesan.textContent = "❌ Gagal mengirim data. Periksa koneksi internet.";
+      } catch (error) {
+        status.textContent = "❌ Gagal mengirim data. Periksa koneksi internet.";
       }
     });
   </script>
