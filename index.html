@@ -2,40 +2,40 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Dokumentasi PMT Puskesmas Pagak</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form PMT Puskesmas Pagak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: sans-serif;
+      background-color: #eef2f7;
       padding: 20px;
       max-width: 600px;
       margin: auto;
-      background-color: #f0f4f8;
     }
     h2 {
       text-align: center;
-      color: #333;
     }
     input, select {
       width: 100%;
       padding: 10px;
-      margin: 6px 0;
-      border-radius: 8px;
+      margin: 8px 0;
+      border-radius: 6px;
       border: 1px solid #ccc;
     }
     button {
       padding: 10px;
-      background: #28a745;
-      color: white;
+      width: 100%;
+      background-color: #28a745;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      border-radius: 6px;
+      color: white;
       font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2>Form Dokumentasi PMT</h2>
+  <h2>Dokumentasi PMT Pangan Lokal</h2>
   <form id="pmtForm">
     <label>Tanggal</label>
     <input type="date" name="tanggal" required>
@@ -70,7 +70,7 @@
       const form = e.target;
       const formData = new FormData(form);
 
-      const response = await fetch("https://script.google.com/macros/s/AKfycbw99tMtRL1Y23xlDZ8xQl88Gkbwmyiw4ZxYFAVz5EaLrnayY0tlFUnWTEfxrzknLaUZHw/exec", {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbx2Q4kLgD4et_FvmwUwgbZ6rstwlpX3Y0MTrGJTSSGqqEfVIS-nQu_f54HV2OpwRxvW/exec", {
         method: "POST",
         body: formData
       });
