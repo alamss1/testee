@@ -2,143 +2,110 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Dokumentasi PMT 2025</title>
+  <title>Form Dokumentasi PMT Puskesmas Pagak 2025</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       padding: 20px;
-      background: #f0f4f7;
-    }
-    h1 {
-      text-align: center;
-      color: #2a5d84;
-    }
-    form {
       max-width: 600px;
       margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    label {
+    input, select, button {
       display: block;
-      margin: 15px 0 5px;
-    }
-    input, select {
       width: 100%;
+      margin-bottom: 15px;
       padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      font-size: 1em;
     }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      background: #2a5d84;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #204a6b;
-    }
-    .success, .error {
-      text-align: center;
+    #status {
       margin-top: 15px;
+      font-weight: bold;
     }
-    .success { color: green; }
-    .error { color: red; }
   </style>
 </head>
 <body>
-  <h1>DOKUMENTASI PMT PANGAN LOKAL 2025</h1>
-  <form id="uploadForm">
-    <label for="tanggal">Tanggal</label>
-    <input type="date" id="tanggal" name="tanggal" required />
+  <h2>DOKUMENTASI PMT PANGAN LOKAL<br>DAK NON FISIK PUSKESMAS PAGAK 2025</h2>
 
-    <label for="desa">Nama Desa</label>
-    <select id="desa" name="desa" required>
-      <option value="">Pilih Desa</option>
+  <form id="uploadForm">
+    <label>Tanggal:</label>
+    <input type="date" name="tanggal" required>
+
+    <label>Nama Desa:</label>
+    <select name="desa" required>
+      <option value="">-- Pilih Desa --</option>
       <option value="Gampingan">Gampingan</option>
       <option value="Tlogorejo">Tlogorejo</option>
       <option value="Sumberejo">Sumberejo</option>
       <option value="Pagak">Pagak</option>
     </select>
 
-    <label for="nama_balita">Nama Balita</label>
-    <input type="text" id="nama_balita" name="nama_balita" placeholder="Opsional" />
+    <label>Nama Balita (opsional):</label>
+    <input type="text" name="nama_balita">
 
-    <label for="nama_ibu">Nama Ibu Hamil</label>
-    <input type="text" id="nama_ibu" name="nama_ibu" placeholder="Opsional" />
+    <label>Nama Ibu Hamil (opsional):</label>
+    <input type="text" name="nama_ibu">
 
-    <label for="foto_balita">Upload Foto Balita</label>
-    <input type="file" id="foto_balita" name="foto_balita" accept="image/*" />
+    <label>Upload Foto Balita (opsional):</label>
+    <input type="file" name="foto_balita" accept="image/*">
 
-    <label for="foto_ibu">Upload Foto Ibu Hamil</label>
-    <input type="file" id="foto_ibu" name="foto_ibu" accept="image/*" />
+    <label>Upload Foto Ibu Hamil (opsional):</label>
+    <input type="file" name="foto_ibu" accept="image/*">
 
-    <button type="submit">Kirim Dokumentasi</button>
-    <div class="success" id="successMsg"></div>
-    <div class="error" id="errorMsg"></div>
+    <button type="submit">Kirim Data</button>
+    <div id="status"></div>
   </form>
 
   <script>
+    const form = document.getElementById('uploadForm');
+    const status = document.getElementById('status');
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzh1D7UT84OXHw7TDeLu-At0Ikslj0hysJ-8NxerAwDCE7jibjXVJkRmacZ3yCqLpLefw/exec";
 
-    const toBase64 = file => new Promise((resolve, reject) => {
-      if (!file) return resolve("");
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(",")[1]);
-      reader.onerror = error => reject(error);
-    });
-
-    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const tanggal = document.getElementById("tanggal").value;
-      const desa = document.getElementById("desa").value;
-      const nama_balita = document.getElementById("nama_balita").value;
-      const nama_ibu = document.getElementById("nama_ibu").value;
-      const foto_balita_file = document.getElementById("foto_balita").files[0];
-      const foto_ibu_file = document.getElementById("foto_ibu").files[0];
+      status.textContent = "Mengirim data...";
 
-      const foto_balita = await toBase64(foto_balita_file);
-      const foto_ibu = await toBase64(foto_ibu_file);
-
-      const data = {
-        tanggal,
-        desa,
-        nama_balita,
-        nama_ibu,
-        foto_balita,
-        foto_ibu
+      const formData = new FormData(form);
+      const getBase64 = (file) => {
+        return new Promise((resolve) => {
+          if (!file) return resolve("");
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(",")[1]);
+          reader.readAsDataURL(file);
+        });
       };
 
-      document.getElementById("successMsg").textContent = "";
-      document.getElementById("errorMsg").textContent = "";
+      const fotoBalita = await getBase64(formData.get("foto_balita"));
+      const fotoIbu = await getBase64(formData.get("foto_ibu"));
+
+      const data = {
+        tanggal: formData.get("tanggal"),
+        desa: formData.get("desa"),
+        nama_balita: formData.get("nama_balita"),
+        nama_ibu: formData.get("nama_ibu"),
+        foto_balita: fotoBalita,
+        foto_ibu: fotoIbu
+      };
 
       try {
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
           redirect: "follow",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
           body: JSON.stringify(data)
         });
 
         const result = await res.json();
         if (result.status === "success") {
-          document.getElementById("successMsg").textContent = "✅ Data berhasil dikirim.";
-          document.getElementById("uploadForm").reset();
+          status.textContent = "✅ Data berhasil dikirim!";
+          form.reset();
         } else {
-          throw new Error(result.message || "Gagal mengirim data");
+          status.textContent = "❌ Gagal mengirim data. Coba lagi.";
         }
       } catch (err) {
         console.error(err);
-        document.getElementById("errorMsg").textContent = "❌ Terjadi kesalahan saat mengirim.";
+        status.textContent = "❌ Gagal mengirim data. Pastikan koneksi internet stabil.";
       }
     });
   </script>
